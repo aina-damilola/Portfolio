@@ -1,4 +1,13 @@
 import { useRef, useEffect } from "react"
+import Taskbar from './taskbar'
+import { APPS } from './apps'
+
+const WALLPAPER = `
+  radial-gradient(60% 52% at 50% 36%, rgba(95,155,255,0.45) 0%, rgba(60,110,220,0.12) 46%, transparent 72%),
+  radial-gradient(42% 38% at 64% 60%, rgba(150,110,255,0.30) 0%, transparent 62%),
+  radial-gradient(46% 42% at 36% 64%, rgba(40,165,225,0.30) 0%, transparent 62%),
+  linear-gradient(150deg, #06122e 0%, #0c2150 46%, #123a86 100%)
+`
 
 function ScreenContent({ w, h, zoomed, onActivate }) {
   const rootRef = useRef(null)
@@ -15,51 +24,22 @@ function ScreenContent({ w, h, zoomed, onActivate }) {
     return () => types.forEach(t => el.removeEventListener(t, stop))
   }, [zoomed, onActivate])
 
+  const onOpen =()=>{
+
+  }
+
   return (
-    <div
+    <div 
       ref={rootRef}
       style={{
-      width: w, height: h,
-      background: '#070d1e',
+      width: w,
+      height: h,
+      position: 'relative',
       overflow: 'hidden',
-      fontFamily: "'Inter', 'SF Pro Display', system-ui, sans-serif",
-      boxSizing: 'border-box',
-      padding: `${h * 0.07}px ${w * 0.065}px`,
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'space-between',
-      color: '#c8d8f0',
-      userSelect: 'none',
-      cursor: zoomed ? 'default' : 'pointer',
+      fontFamily: "'Segoe UI Variable', 'Segoe UI', 'Inter', system-ui, sans-serif",
+      background: WALLPAPER,
     }}>
-      {/* Hero */}
-      <div>
-        <div style={{
-          fontSize: h * 0.04,
-          letterSpacing: '0.18em',
-          color: '#3a5590',
-          marginBottom: h * 0.025,
-          textTransform: 'uppercase',
-        }}>
-          Portfolio
-        </div>
-        <div style={{
-          fontSize: h * 0.145,
-          fontWeight: 700,
-          letterSpacing: '-0.02em',
-          lineHeight: 1.05,
-        }}>
-          Dami Aina
-        </div>
-        <div style={{
-          fontSize: h * 0.053,
-          color: '#506a99',
-          marginTop: h * 0.018,
-          lineHeight: 1.4,
-        }}>
-          Computer Engineering · Full-Stack · Embedded
-        </div>
-      </div>
+      <Taskbar apps={APPS} h={h} onOpen={onOpen}/>
     </div>
   )
 }
