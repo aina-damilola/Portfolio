@@ -1,4 +1,5 @@
 import { useRef, useEffect } from "react"
+import Desktop from './desktop'
 import Taskbar from './taskbar'
 import { APPS } from './apps'
 
@@ -39,6 +40,7 @@ function ScreenContent({ w, h, zoomed, onActivate }) {
       fontFamily: "'Segoe UI Variable', 'Segoe UI', 'Inter', system-ui, sans-serif",
       background: WALLPAPER,
     }}>
+      <Desktop apps={APPS} h={h} onOpen={onOpen} />
       <Taskbar apps={APPS} h={h} onOpen={onOpen}/>
     </div>
   )
