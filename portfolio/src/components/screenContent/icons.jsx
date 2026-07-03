@@ -51,6 +51,18 @@ export function WindowsLogo({ size }) {
   )
 }
 
+export function FileIcon({ size, accent = '#4a90e2' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48">
+      <path d="M11 5h17l9 9v26a3 3 0 0 1-3 3H11a3 3 0 0 1-3-3V8a3 3 0 0 1 3-3z" fill="#fdfeff" />
+      <path d="M28 5l9 9h-6a3 3 0 0 1-3-3z" fill="#cdd9ea" />
+      <rect x="14" y="20" width="20" height="2.4" rx="1.2" fill={accent} />
+      <rect x="14" y="26" width="20" height="2.4" rx="1.2" fill="#b9c6da" />
+      <rect x="14" y="32" width="13" height="2.4" rx="1.2" fill="#b9c6da" />
+    </svg>
+  )
+}
+
 export function TrayIcon({ id, size }) {
   const common = { width: size, height: size, viewBox: '0 0 24 24', fill: 'none', stroke: '#e8eefc', strokeWidth: 1.7, strokeLinecap: 'round', strokeLinejoin: 'round' }
   switch (id) {

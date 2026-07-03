@@ -67,12 +67,13 @@ function Laptop({ zoomed, onZoomIn, onZoomOut }) {
     const info = {
       position: [_pos.x, _pos.y, _pos.z],
       rotation: [euler.x, euler.y, euler.z],
+      normal: [forward.x, forward.y, forward.z],
+      worldW,
+      worldH,
       htmlWidth,
       htmlHeight,
       scale,
     }
-    // console.log('Screen detected:', JSON.stringify(info), 'worldW', worldW, 'worldH', worldH)
-    // console.log('ZOOM_POS set to:', ZOOM_POS.toArray(), 'dist', dist)
 
     setScreenInfo(info)
     detected.current = true
@@ -85,21 +86,31 @@ function Laptop({ zoomed, onZoomIn, onZoomOut }) {
         rotation={[0, Math.PI, 0]}
         onClick={(e) => { e.stopPropagation(); zoomed ? onZoomOut() : onZoomIn() }}
       />
-      {screenInfo &&(
-        <Html
-          transform
-          position={screenInfo.position}
-          rotation={screenInfo.rotation}
-          scale={screenInfo.scale}
-          style={{ pointerEvents: 'auto' }}
-        >
-          <ScreenContent
-            w={screenInfo.htmlWidth}
-            h={screenInfo.htmlHeight}
-            zoomed={zoomed}
-            onActivate={onZoomIn}
-          />
-        </Html>
+      {screenInfo && (
+        <>
+          <mesh
+            position={[
+              screenInfo.position[0] + screenInfo.normal[0] * 0.005,
+              screenInfo.position[1] + screenInfo.normal[1] * 0.005,
+              screenInfo.position[2] + screenInfo.normal[2] * 0.005,
+            ]}
+            rotation={screenInfo.rotation}
+            onClick={(e) => { e.stopPropagation(); if (!zoomed) onZoomIn() }}
+          >
+            <planeGeometry args={[screenInfo.worldW, screenInfo.worldH]} />
+            <meshBasicMaterial transparent opacity={0} depthWrite={false} side={THREE.DoubleSide} />
+          </mesh>
+
+          <Html
+            transform
+            position={screenInfo.position}
+            rotation={screenInfo.rotation}
+            scale={screenInfo.scale}
+            style={{ pointerEvents: zoomed ? 'auto' : 'none' }}
+          >
+            <ScreenContent w={screenInfo.htmlWidth} h={screenInfo.htmlHeight} onZoomOut={onZoomOut} />
+          </Html>
+        </>
       )}
     </>
   )

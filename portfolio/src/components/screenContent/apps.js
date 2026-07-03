@@ -1,8 +1,6 @@
-// Desktop apps shown as icons + taskbar entries.
-// `window` content gets wired up in the next pass (openable windows).
 export const APPS = [
-  { id: 'projects',   label: 'Projects' },
-  { id: 'about',      label: 'About Me' },
-  { id: 'experience', label: 'Experience' },
-  { id: 'contact',    label: 'Contact' },
+  { id: 'projects', label: 'Projects', type: 'folder'},
+  { id: 'about', label: 'About Me', type: 'document'},
+  { id: 'experience', label: 'Experience', type: 'document'},
+  { id: 'contact', label: 'Contact', type: 'document'},
 ]

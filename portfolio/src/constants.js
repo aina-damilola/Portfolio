@@ -2,8 +2,8 @@ import * as THREE from 'three'
 
 export const DEFAULT_POS = new THREE.Vector3(2.5, 1.4, 2.5)
 export const DEFAULT_LOOK = new THREE.Vector3(0, 0.1, 0)
-export const ZOOM_POS = new THREE.Vector3(0, 0.4, 0.5)
-export const ZOOM_LOOK = new THREE.Vector3(0, 0.35, 0)
+export const ZOOM_POS = new THREE.Vector3(0, 0.4, 0.5) // placeholder, gets computed runtime
+export const ZOOM_LOOK = new THREE.Vector3(0, 0.35, 0) // placeholder, gets computed runtime
 
 export const _pos = new THREE.Vector3()
 export const _quat = new THREE.Quaternion()
