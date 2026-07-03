@@ -3,7 +3,7 @@ import { Canvas, useFrame, useThree, events as createPointerEvents } from '@reac
 import { useGLTF, Html } from '@react-three/drei'
 import * as THREE from 'three'
 
-import CameraRig from './components/CameraRig'
+import CameraRig from './components/cameraRig'
 import Laptop from './components/laptop'
 import { DEFAULT_POS } from "./constants"
 
