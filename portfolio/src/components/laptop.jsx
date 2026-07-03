@@ -6,7 +6,7 @@ import { _pos, _quat, _scale, _dir, DEFAULT_POS, ZOOM_POS, ZOOM_LOOK, DREI_TRANS
 import ScreenContent from './screenContent/main'
 
 function Laptop({ zoomed, onZoomIn, onZoomOut }) {
-  const { scene } = useGLTF('/models/laptop.glb')
+  const { scene } = useGLTF(`${import.meta.env.BASE_URL}models/laptop.glb`)
   const { camera, size } = useThree()
   const detected = useRef(false)
   const [screenInfo, setScreenInfo] = useState(null)
