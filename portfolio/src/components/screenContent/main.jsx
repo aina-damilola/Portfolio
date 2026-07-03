@@ -14,6 +14,26 @@ function ScreenContent({ w, h, onZoomOut }) {
   const [mode, setMode] = useState('light')
   const t = THEMES[mode]
 
+  // Shared hover tooltip rendered at the desktop root so it can't be clipped by a
+  // window's overflow. Positioned by the pointer (converted to content px), clamped
+  // to the screen — same content-px scaling the window drag uses.
+  const [tip, setTip] = useState(null)
+  const showTip = useCallback((text, hint, clientX, clientY) => {
+    const rect = desktopRef.current?.getBoundingClientRect()
+    if (!rect) return
+    const cx = (clientX - rect.left) / rect.width * w
+    const cy = (clientY - rect.top) / rect.height * h
+    const tipW = h * 0.26
+    const tipH = h * 0.09
+    let x = cx + h * 0.018
+    let y = cy - tipH - h * 0.01
+    if (y < 0) y = cy + h * 0.02
+    x = Math.max(0, Math.min(w - tipW, x))
+    y = Math.max(0, Math.min(h - tipH, y))
+    setTip({ text, hint, x, y, tipW })
+  }, [w, h])
+  const hideTip = useCallback(() => setTip(null), [])
+
   const nextZ = () => (zRef.current += 1)
 
   const openWindow = useCallback((spec) => {
@@ -105,9 +125,22 @@ function ScreenContent({ w, h, onZoomOut }) {
             onMinimize={minimizeWindow}
             onClose={closeWindow}
           >
-            <WindowBody win={win} h={h} onOpenProject={openProject} />
+            <WindowBody win={win} h={h} onOpenProject={openProject} showTip={showTip} hideTip={hideTip} />
           </Window>
         ))}
+
+        {tip && (
+          <div style={{
+            position: 'absolute', left: tip.x, top: tip.y, width: tip.tipW,
+            padding: `${h * 0.01}px ${h * 0.012}px`,
+            background: t.popupBg, color: t.popupText, borderRadius: h * 0.01,
+            fontSize: h * 0.016, lineHeight: 1.4,
+            boxShadow: `0 ${h * 0.01}px ${h * 0.025}px rgba(0,0,0,0.5)`,
+            zIndex: 8500, pointerEvents: 'none',
+          }}>
+            {tip.text}{tip.hint && <span style={{ color: t.popupMuted }}> · {tip.hint}</span>}
+          </div>
+        )}
 
         <Taskbar
           apps={APPS}

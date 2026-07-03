@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import { useGLTF, Html } from '@react-three/drei'
 import * as THREE from 'three'
@@ -51,15 +51,6 @@ function Laptop({ zoomed, onZoomIn, onZoomOut }) {
     const basis = new THREE.Matrix4().makeBasis(right, up, forward)
     const euler = new THREE.Euler().setFromRotationMatrix(basis)
 
-    const vfov   = THREE.MathUtils.degToRad(camera.fov)
-    const tanV   = Math.tan(vfov / 2)
-    const aspect = size.width / size.height
-    const distH  = (worldH / 2) / tanV
-    const distW  = (worldW / 2) / (tanV * aspect)
-    const dist   = Math.max(distH, distW) * 1.02
-    ZOOM_POS.copy(_pos).addScaledVector(forward, dist)
-    ZOOM_LOOK.copy(_pos)
-
     const htmlHeight = SCREEN_RENDER_H
     const htmlWidth  = Math.round(SCREEN_RENDER_H * (worldW / worldH))
     const scale = worldH / (htmlHeight * DREI_TRANSFORM_RATIO)
@@ -78,6 +69,23 @@ function Laptop({ zoomed, onZoomIn, onZoomOut }) {
     setScreenInfo(info)
     detected.current = true
   })
+
+  // Recompute the zoom target from the CURRENT viewport size (re-runs on resize),
+  // so the screen keeps filling the view instead of being baked to the first frame's
+  // aspect ratio. CameraRig reads ZOOM_POS/ZOOM_LOOK every frame, so no extra wiring.
+  useEffect(() => {
+    if (!screenInfo) return
+    const { position, normal, worldW, worldH } = screenInfo
+    const tanV   = Math.tan(THREE.MathUtils.degToRad(camera.fov) / 2)
+    const aspect = size.width / size.height
+    const dist   = Math.max((worldH / 2) / tanV, (worldW / 2) / (tanV * aspect)) * 1.02
+    ZOOM_POS.set(
+      position[0] + normal[0] * dist,
+      position[1] + normal[1] * dist,
+      position[2] + normal[2] * dist,
+    )
+    ZOOM_LOOK.set(position[0], position[1], position[2])
+  }, [screenInfo, size.width, size.height, camera.fov])
 
   return (
     <>

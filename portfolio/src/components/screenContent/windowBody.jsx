@@ -108,18 +108,18 @@ function DocContact({ h }) {
   )
 }
 
-function FileCell({ p, h, sel, onSelect, onOpen }) {
+function FileCell({ p, h, sel, onSelect, onOpen, showTip, hideTip }) {
   const t = useTheme()
-  const [hover, setHover] = useState(false)
   const cell = h * 0.13
+  const tip = (e) => showTip(p.blurb, 'double-click to open', e.clientX, e.clientY)
   return (
     <div
       onClick={() => onSelect(p.id)}
       onDoubleClick={() => onOpen(p.id)}
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
+      onMouseEnter={tip}
+      onMouseMove={tip}
+      onMouseLeave={hideTip}
       style={{
-        position: 'relative',
         width: cell, padding: h * 0.012, borderRadius: h * 0.008,
         display: 'flex', flexDirection: 'column', alignItems: 'center', gap: h * 0.008,
         background: sel ? `${t.accent}28` : 'transparent',
@@ -129,27 +129,19 @@ function FileCell({ p, h, sel, onSelect, onOpen }) {
     >
       <FileIcon size={cell * 0.5} />
       <span style={{ fontSize: h * 0.018, color: t.text, lineHeight: 1.2 }}>{p.name}</span>
-      {hover && (
-        <span style={{
-          position: 'absolute', bottom: '100%', left: '50%', transform: 'translateX(-50%)',
-          marginBottom: h * 0.004, width: h * 0.24, padding: `${h * 0.009}px ${h * 0.011}px`,
-          background: t.popupBg, color: t.popupText, borderRadius: h * 0.01,
-          fontSize: h * 0.0155, lineHeight: 1.4, textAlign: 'center',
-          boxShadow: `0 ${h * 0.01}px ${h * 0.025}px rgba(0,0,0,0.5)`, zIndex: 20, pointerEvents: 'none',
-        }}>
-          {p.blurb} <span style={{ color: t.popupMuted }}>· double-click to open</span>
-        </span>
-      )}
     </div>
   )
 }
 
-function FolderView({ h, onOpenProject }) {
+function FolderView({ h, onOpenProject, showTip, hideTip }) {
   const [sel, setSel] = useState(null)
   return (
-    <div style={{ display: 'flex', flexWrap: 'wrap', gap: h * 0.012, alignContent: 'flex-start' }}>
+    <div
+      onMouseLeave={hideTip}
+      style={{ display: 'flex', flexWrap: 'wrap', gap: h * 0.012, alignContent: 'flex-start' }}
+    >
       {PROJECTS.map(p => (
-        <FileCell key={p.id} p={p} h={h} sel={sel === p.id} onSelect={setSel} onOpen={onOpenProject} />
+        <FileCell key={p.id} p={p} h={h} sel={sel === p.id} onSelect={setSel} onOpen={onOpenProject} showTip={showTip} hideTip={hideTip} />
       ))}
     </div>
   )
@@ -193,7 +185,7 @@ function ProjectView({ h, projId }) {
   )
 }
 
-export default function WindowBody({ win, h, onOpenProject }) {
+export default function WindowBody({ win, h, onOpenProject, showTip, hideTip }) {
   switch (win.kind) {
     case 'doc':
       if (win.refId === 'about') return <DocAbout h={h} />
@@ -201,7 +193,7 @@ export default function WindowBody({ win, h, onOpenProject }) {
       if (win.refId === 'contact') return <DocContact h={h} />
       return null
     case 'folder':
-      return <FolderView h={h} onOpenProject={onOpenProject} />
+      return <FolderView h={h} onOpenProject={onOpenProject} showTip={showTip} hideTip={hideTip} />
     case 'project':
       return <ProjectView h={h} projId={win.refId} />
     default:
